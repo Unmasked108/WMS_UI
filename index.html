@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WMS - Warehouse Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-warehouse"></i> WMS - Warehouse Management System</h1>
+            <p>Upload your CSV files to process orders and manage inventory</p>
+        </header>
+
+        <!-- Status Cards -->
+        <div class="status-cards">
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="status-info">
+                    <h3 id="mappingsCount">0</h3>
+                    <p>SKU Mappings</p>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="status-info">
+                    <h3 id="combosCount">0</h3>
+                    <p>Combo SKUs</p>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="status-info">
+                    <h3 id="inventoryCount">0</h3>
+                    <p>Inventory Items</p>
+                </div>
+            </div>
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="status-info">
+                    <h3 id="serverStatus">Checking...</h3>
+                    <p>Server Status</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="upload-section">
+            <h2><i class="fas fa-upload"></i> Upload Files</h2>
+            
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="file-group">
+                    <label for="masterFile">
+                        <i class="fas fa-file-csv"></i> Master SKU File (Optional)
+                        <span class="file-hint">Upload if not already loaded on server</span>
+                    </label>
+                    <input type="file" id="masterFile" name="masterFile" accept=".csv" />
+                    <div class="file-status" id="masterFileStatus"></div>
+                </div>
+
+                <div class="file-group">
+                    <label for="orderFiles">
+                        <i class="fas fa-file-invoice"></i> Order Files (Required)
+                        <span class="file-hint">Select one or multiple CSV files</span>
+                    </label>
+                    <input type="file" id="orderFiles" name="orderFiles" accept=".csv" multiple required />
+                    <div class="file-status" id="orderFilesStatus"></div>
+                </div>
+
+                <button type="submit" id="processBtn" class="btn btn-primary">
+                    <i class="fas fa-cogs"></i> Process Orders
+                </button>
+            </form>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="resetBtn" class="btn btn-secondary">
+                <i class="fas fa-undo"></i> Reset Inventory
+            </button>
+            <button id="viewMappingsBtn" class="btn btn-info">
+                <i class="fas fa-list"></i> View Mappings
+            </button>
+            <button id="viewInventoryBtn" class="btn btn-info">
+                <i class="fas fa-warehouse"></i> View Inventory
+            </button>
+            <button id="viewChangesBtn" class="btn btn-warning">
+                <i class="fas fa-exchange-alt"></i> View Changes
+            </button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processing your files...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <h2><i class="fas fa-chart-bar"></i> Processing Results</h2>
+            
+            <!-- Summary Cards -->
+            <div id="summaryCards" class="summary-cards"></div>
+            
+            <!-- Tabs for different views -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="summary">Summary</button>
+                <button class="tab-button" data-tab="inventory">Inventory Updates</button>
+                <button class="tab-button" data-tab="orders">Processed Orders</button>
+                <button class="tab-button" data-tab="unmapped">Unmapped SKUs</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div id="summaryTab" class="tab-content active">
+                <div id="summaryContent"></div>
+            </div>
+
+            <div id="inventoryTab" class="tab-content">
+                <div class="table-controls">
+                    <input type="text" id="inventorySearch" placeholder="Search MSKU..." />
+                    <select id="inventoryFilter">
+                        <option value="all">All Items</option>
+                        <option value="outofstock">Out of Stock</option>
+                        <option value="lowstock">Low Stock</option>
+                    </select>
+                </div>
+                <div id="inventoryContent" class="table-container"></div>
+            </div>
+
+            <div id="ordersTab" class="tab-content">
+                <div class="table-controls">
+                    <input type="text" id="ordersSearch" placeholder="Search orders..." />
+                    <select id="marketplaceFilter">
+                        <option value="all">All Marketplaces</option>
+                    </select>
+                </div>
+                <div id="ordersContent" class="table-container"></div>
+            </div>
+
+            <div id="unmappedTab" class="tab-content">
+                <div id="unmappedContent" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
